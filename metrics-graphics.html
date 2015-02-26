@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<title>Metrics-Graphics Test</title>
+		<link href='css/metricsgraphics.css' rel='stylesheet' type='text/css'>
+		
+		<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+    	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js' charset='utf-8'></script>
+    	<script src='js/metricsgraphics.js'></script>
+    	<script>
+			d3.json('revenue-xmr.json', function (error, data) {
+				if (error) return console.warn(error);
+				
+				data = MG.convert.date(data, 'date');
+				data = [
+					data.map(function(row) { return {date: row.date, value: row.revenue} }),
+					data.map(function(row) { return {date: row.date, value: row.mean, lcl: row.lcl, ucl: row.ucl} })
+				];
+				
+				$(document).ready(function() {
+					MG.data_graphic({
+						target: '#chart',
+	
+						title: "Daily Revenue",
+						description: null,
+	
+						data: data,
+						x_accessor: 'date',
+						y_accessor: 'value',
+						show_confidence_band: ['lcl', 'ucl'],
+	
+						width: 800,
+						height: 300,
+						x_extended_ticks: true,
+						area: false
+					});
+				});
+			});
+		</script>
+		
+		<style>
+			#chart path.mg-line2-color {
+				stroke: red;
+			}
+			
+			#chart path.mg-confidence-band {
+				fill: #ccccf5;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="chart" />
+	</body>
+</html>
